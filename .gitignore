@@ -2,3 +2,5 @@
 .idea/*
 venv
 venv/*
+
+./terraform/.terraform/*
