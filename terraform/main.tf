@@ -1,24 +1,24 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.27"
+      source  = var.awsSource
+      version = var.awsVersion
     }
   }
 }
 
 resource "aws_s3_bucket" "bucket75941" {
-  bucket = "bucket75941"
+  bucket = var.bucketName
 }
 
 resource "aws_s3_bucket_acl" "bucket75941" {
   bucket = aws_s3_bucket.bucket75941.id
-  acl    = "private"
+  acl    = var.aclType
 }
 
 resource "aws_s3_object" "bucket75941" {
-  bucket = "bucket75941"
-  key    = "test"
+  bucket = var.bucketName
+  key    = var.objectKey
   # source = "./www/"
 
   # The filemd5() function is available in Terraform 0.11.12 and later
@@ -35,19 +35,13 @@ resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
 data "aws_iam_policy_document" "allow_access_from_another_account" {
   statement {
     principals {
-      type        = "AWS"
-      identifiers = ["123456789012"]
+      type        = var.policyDocumentPrincipalsType
+      identifiers = var.policyDocumentPrincipalsIdentifiers
     }
 
-    actions = [
-      "s3:GetObject",
-      "s3:ListBucket",
-    ]
+    actions = var.policyDocumentPrincipalsActions
 
-    resources = [
-      aws_s3_bucket.bucket75941.arn,
-      "${aws_s3_bucket.bucket75941.arn}/*",
-    ]
+    resources = var.policyDocumentPrincipalsResources
   }
 }
 
@@ -55,11 +49,11 @@ resource "aws_s3_bucket_website_configuration" "bucket75941" {
   bucket = aws_s3_bucket.bucket75941.bucket
 
   index_document {
-    suffix = "index.html"
+    suffix = var.indexWebsiteFile
   }
 
   error_document {
-    key = "error.html"
+    key = var.errorWebsiteFile
   }
 
   routing_rules = <<EOF
