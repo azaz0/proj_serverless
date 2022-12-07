@@ -1,12 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = var.awsSource
-      version = var.awsVersion
-    }
-  }
-}
-
 resource "aws_s3_bucket" "bucket75941" {
   bucket = var.bucketName
 }
@@ -17,7 +8,7 @@ resource "aws_s3_bucket_acl" "bucket75941" {
 }
 
 resource "aws_s3_object" "bucket75941" {
-  bucket = var.bucketName
+  bucket = aws_s3_bucket.bucket75941.id
   key    = var.objectKey
   # source = "./www/"
 
@@ -41,7 +32,10 @@ data "aws_iam_policy_document" "allow_access_from_another_account" {
 
     actions = var.policyDocumentPrincipalsActions
 
-    resources = var.policyDocumentPrincipalsResources
+    resources = [
+      aws_s3_bucket.bucket75941.arn,
+      "${aws_s3_bucket.bucket75941.arn}/*",
+    ]
   }
 }
 
