@@ -3,4 +3,5 @@
 venv
 venv/*
 
+terraform/.terraform/*
 ./terraform/.terraform/*
