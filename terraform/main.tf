@@ -18,9 +18,28 @@ resource "aws_s3_object" "bucket75941" {
   # etag = filemd5(aws_s3_object.bucket75941.source)
 }
 
-resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
+#resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
+#  bucket = aws_s3_bucket.bucket75941.id
+#  policy = data.aws_iam_policy_document.allow_access_from_another_account.json
+#}
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.bucket75941.id
-  policy = data.aws_iam_policy_document.allow_access_from_another_account.json
+
+  policy = <<POLICY
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Sid": "PublicReadGetObject",
+"Effect": "Allow",
+"Principal": "*",
+"Action": "s3:GetObject",
+"Resource": "arn:aws:s3:::bucket75941/*"
+}
+]
+}
+POLICY
 }
 
 data "aws_iam_policy_document" "allow_access_from_another_account" {
